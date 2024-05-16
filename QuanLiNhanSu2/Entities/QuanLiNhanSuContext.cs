@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Models;
 
 namespace QuanLiNhanSu2.Entities
 {
-    public class QuanLiNhanSuContext : DbContext
+    public class QuanLiNhanSuContext : IdentityDbContext<ApplicationUsers>
     {
         public QuanLiNhanSuContext(DbContextOptions<QuanLiNhanSuContext> opt): base(opt)
         {

@@ -12,7 +12,7 @@ namespace QuanLiNhanSu2.Entities
         public string Sex { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string DepId { get; set; }
+        public string? DepId { get; set; }
 
         public Department Department { get; set; }
     }
