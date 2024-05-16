@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLiNhanSu2.Models;
 using QuanLiNhanSu2.Services;
@@ -37,6 +38,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddDepartment(DepartmentModel model)
         {
             try
@@ -51,6 +53,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateDepartment(string id, DepartmentModel model)
         {
             if (id == model.Id)
@@ -65,6 +68,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteDepartment(string id)
         {
             if (id == null)
