@@ -19,11 +19,23 @@ namespace QuanLiNhanSu2.Services.Implements
 
         public async Task<string> AddEmployee(EmployeeModel model)
         {
-            var newEmp = _mapper.Map<Employee>(model);
-            _context.Employees!.Add(newEmp);
-            await _context.SaveChangesAsync();
+            //var newEmp = _mapper.Map<Employee>(model);
+            //_context.Employees!.Add(newEmp);
+            //await _context.SaveChangesAsync();
 
-            return newEmp.Id;
+            //return newEmp.Id;
+            try
+            {
+                var newEmp = _mapper.Map<Employee>(model);
+                _context.Employees!.Add(newEmp);
+                await _context.SaveChangesAsync();
+
+                return newEmp.Id;
+            }
+            catch (Exception ex)
+            {
+                return ex.InnerException.Message;
+            }
         }
 
         public  async Task DeleteEmployee(string id)
