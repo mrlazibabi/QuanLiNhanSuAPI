@@ -14,6 +14,7 @@ namespace QuanLiNhanSu2.Entities
         public DbSet<Employee>? Employees { get; set; }
         public DbSet<Department>? Departments { get; set; }
         public DbSet<QuanLiNhanSu2.Models.EmployeeModel>? EmployeeModel { get; set; }
+        public DbSet<QuanLiNhanSu2.Models.DepartmentModel>? DepartmentModel { get; set; }
         #endregion
     }
 }

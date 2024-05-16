@@ -1,5 +1,4 @@
-﻿using QuanLiNhanSu2.Entities;
-using QuanLiNhanSu2.Models;
+﻿using QuanLiNhanSu2.Models;
 
 namespace QuanLiNhanSu2.Services
 {
