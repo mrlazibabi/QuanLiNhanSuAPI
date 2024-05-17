@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuanLiNhanSu2.Entities;
-using QuanLiNhanSu2.Repositories;
-using QuanLiNhanSu2.Repositories.Implements;
 using QuanLiNhanSu2.Services;
 using QuanLiNhanSu2.Services.Implements;
 using Swashbuckle.AspNetCore.Filters;
@@ -21,33 +19,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 // Config Swagger for authorization
-//builder.Services.AddSwaggerGen(option =>
-//{
-//    option.SwaggerDoc("v1", new OpenApiInfo { Title = "QuanLiNhanSuAPI", Version = "v1" });
-//    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        In = ParameterLocation.Header,
-//        Description = "Please enter a valid token",
-//        Name = "Authorization",
-//        Type = SecuritySchemeType.ApiKey,
-//        BearerFormat = "JWT",
-//        Scheme = "Bearer"
-//    });
-//    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type=ReferenceType.SecurityScheme,
-//                    Id="Bearer"
-//                }
-//            },
-//            new string[]{}
-//        }
-//    });
-//});
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -68,7 +39,6 @@ builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 
 //Add Identity and JWT Authentication
 // Add Identity
-//builder.Services.AddIdentity<ApplicationUsers, IdentityRole>().AddEntityFrameworkStores<QuanLiNhanSuContext>().AddDefaultTokenProviders();
 builder.Services.AddIdentity<ApplicationUsers, IdentityRole>()
     .AddEntityFrameworkStores<QuanLiNhanSuContext>()
     .AddSignInManager()
@@ -101,8 +71,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 // Life Cycle DI : AddSingleton(). AddTransient(), AddScope()
 builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
 builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IAccountServices, AccountServices>();
 
 var app = builder.Build();

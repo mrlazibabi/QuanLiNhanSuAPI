@@ -9,7 +9,8 @@ namespace QuanLiNhanSu2.Models.QuanLiNhanSuModels
         public string Sex { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string DepartmentId { get; set; }
+        public string? DepartmentId { get; set; }
+        public string? DepartmentName { get; set;}
         //public Department Department { get; set; }
     }
 }

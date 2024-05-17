@@ -2,58 +2,53 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
-using QuanLiNhanSu2.Repositories;
 
 namespace QuanLiNhanSu2.Services.Implements
 {
     public class EmployeeServices : IEmployeeServices
     {
         private QuanLiNhanSuContext _context;
-        private IMapper _mapper;
-        private readonly IDepartmentRepository _depRepo;
-        private readonly IEmployeeRepository _empRepo;
+        private IMapper _mapper;      
 
-        public EmployeeServices(QuanLiNhanSuContext context, IMapper mapper, IDepartmentRepository depRepo, IEmployeeRepository empRepo)
+        public EmployeeServices(QuanLiNhanSuContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _depRepo = depRepo;
-            _empRepo = empRepo;
             
         }
 
-        //public async Task<string> AddEmployee(EmployeeModel model)
-        //{
-
-        //    try
-        //    {
-        //        var newEmp = _mapper.Map<Employee>(model);
-        //        _context.Employees!.Add(newEmp);
-        //        await _context.SaveChangesAsync();
-
-        //        return newEmp.Id;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ex.InnerException.Message;
-        //    }
-        //}
-
-        public async Task<EmployeeModel> AddEmployee(EmployeeModel model)
+        public async Task<string> AddEmployee(EmployeeModel model)
         {
+
             try
             {
                 var newEmp = _mapper.Map<Employee>(model);
-                newEmp.Department = _depRepo!.GetById(model.DepartmentId).Result;
-                await _empRepo.AddEmpEntityAsync(newEmp);
+                _context.Employees!.Add(newEmp);
+                await _context.SaveChangesAsync();
 
-                return _mapper!.Map<EmployeeModel>(model);
+                return newEmp.Id;
             }
             catch (Exception ex)
             {
-                return null;
+                return ex.InnerException.Message;
             }
         }
+
+        //public async Task<EmployeeModel> AddEmployee(EmployeeModel model)
+        //{
+        //    try
+        //    {
+        //        var newEmp = _mapper.Map<Employee>(model);
+        //        newEmp.Department = _depRepo!.GetById(model.DepartmentId).Result;
+        //        await _empRepo.AddEmpEntityAsync(newEmp);
+
+        //        return _mapper!.Map<EmployeeModel>(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public  async Task DeleteEmployee(string id)
         {
