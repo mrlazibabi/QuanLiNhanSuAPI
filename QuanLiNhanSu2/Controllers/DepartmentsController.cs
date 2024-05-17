@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
 using QuanLiNhanSu2.Services;
 
 namespace QuanLiNhanSu2.Controllers

@@ -9,6 +9,8 @@ using QuanLiNhanSu2.Repositories;
 using QuanLiNhanSu2.Repositories.Implements;
 using QuanLiNhanSu2.Services;
 using QuanLiNhanSu2.Services.Implements;
+using Swashbuckle.AspNetCore.Filters;
+using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,32 +21,43 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 // Config Swagger for authorization
-builder.Services.AddSwaggerGen(option =>
+//builder.Services.AddSwaggerGen(option =>
+//{
+//    option.SwaggerDoc("v1", new OpenApiInfo { Title = "QuanLiNhanSuAPI", Version = "v1" });
+//    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    {
+//        In = ParameterLocation.Header,
+//        Description = "Please enter a valid token",
+//        Name = "Authorization",
+//        Type = SecuritySchemeType.ApiKey,
+//        BearerFormat = "JWT",
+//        Scheme = "Bearer"
+//    });
+//    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type=ReferenceType.SecurityScheme,
+//                    Id="Bearer"
+//                }
+//            },
+//            new string[]{}
+//        }
+//    });
+//});
+builder.Services.AddSwaggerGen(options =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "QuanLiNhanSuAPI", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.ApiKey
     });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
+
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
 // Add CORS
@@ -53,26 +66,29 @@ builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
     build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
 
+//Add Identity and JWT Authentication
 // Add Identity
-builder.Services.AddIdentity<ApplicationUsers, IdentityRole>().AddEntityFrameworkStores<QuanLiNhanSuContext>().AddDefaultTokenProviders();
-
-// Add authentication
+//builder.Services.AddIdentity<ApplicationUsers, IdentityRole>().AddEntityFrameworkStores<QuanLiNhanSuContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUsers, IdentityRole>()
+    .AddEntityFrameworkStores<QuanLiNhanSuContext>()
+    .AddSignInManager()
+    .AddRoles<IdentityRole>();
+// Add JWT authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; 
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    options.SaveToken = true;
-    options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
         ValidAudience = builder.Configuration["JWT:ValidAudience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
     };
 });
 
@@ -101,6 +117,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("MyCors");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

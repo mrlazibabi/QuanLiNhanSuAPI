@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
 
 namespace QuanLiNhanSu2.Entities
 {
@@ -14,8 +14,8 @@ namespace QuanLiNhanSu2.Entities
         #region DbSet
         public DbSet<Employee>? Employees { get; set; }
         public DbSet<Department>? Departments { get; set; }
-        public DbSet<QuanLiNhanSu2.Models.EmployeeModel>? EmployeeModel { get; set; }
-        public DbSet<QuanLiNhanSu2.Models.DepartmentModel>? DepartmentModel { get; set; }
+        public DbSet<EmployeeModel>? EmployeeModel { get; set; }
+        public DbSet<DepartmentModel>? DepartmentModel { get; set; }
         #endregion
     }
 }

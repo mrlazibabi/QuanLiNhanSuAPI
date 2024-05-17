@@ -1,6 +1,6 @@
 ﻿using QuanLiNhanSu2.Entities;
 
-namespace QuanLiNhanSu2.Models
+namespace QuanLiNhanSu2.Models.QuanLiNhanSuModels
 {
     public class EmployeeModel
     {

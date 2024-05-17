@@ -1,91 +1,99 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using QuanLiNhanSu2.Entities;
-using QuanLiNhanSu2.Helpers;
-using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Models.AuthenModels;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static QuanLiNhanSu2.Models.AuthenModels.ServiceResponses;
 
 namespace QuanLiNhanSu2.Services.Implements
 {
     public class AccountServices : IAccountServices
     {
-        private UserManager<ApplicationUsers> userManager;
-        private SignInManager<ApplicationUsers> signInManager;
-        private IConfiguration configuration;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<ApplicationUsers> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IConfiguration _configuration;
 
-        public AccountServices(UserManager<ApplicationUsers> userManager, SignInManager<ApplicationUsers> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        public AccountServices(UserManager<ApplicationUsers> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.configuration = configuration;
-            this.roleManager = roleManager;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _configuration = configuration;
+
         }
-        public async Task<string> SignInAsync(SignInModel model)
+        public async Task<LoginResponse> SignInAsync(SignInModel model)
         {
-            var user = await userManager.FindByEmailAsync(model.Email);
-            var passwordValid = await userManager.CheckPasswordAsync(user, model.Password);
+            if (model == null)
+                return new LoginResponse(false, null!, "Login container is empty");
 
-            if (user == null || !passwordValid)
+            var getUser = await _userManager.FindByEmailAsync(model.Email);
+            if (getUser is null)
+                return new LoginResponse(false, null!, "User not found");
+
+            bool checkUserPasswords = await _userManager.CheckPasswordAsync(getUser, model.Password);
+            if (!checkUserPasswords)
+                return new LoginResponse(false, null!, "Invalid email/password");
+
+            var getUserRole = await _userManager.GetRolesAsync(getUser);
+            var userSession = new UserSession(getUser.FullName, getUser.Email, getUserRole.First());
+            string token = GenerateToken(userSession);
+            return new LoginResponse(true, token!, "Login completed");
+        }
+
+        private string GenerateToken(UserSession user)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]!));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var userClaims = new[]
             {
-                return string.Empty;
-            }
-
-            var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-
-            if (!result.Succeeded)
-            {
-                return string.Empty;
-            }
-
-            var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, model.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             };
-
-            var userRoles = await userManager.GetRolesAsync(user);
-            foreach (var role in userRoles)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-            }
-
-            var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
-
             var token = new JwtSecurityToken(
-                issuer: configuration["JWT:ValidIssuer"],
-                audience: configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddMinutes(20),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha512Signature)
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: userClaims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<IdentityResult> SignUpAsync(SignUpModel model)
+        public async Task<GeneralResponse> SignUpAsync(SignUpModel model)
         {
-            var user = new ApplicationUsers
+            if (model is null) return new GeneralResponse(false, "Model is empty");
+            var newUser = new ApplicationUsers()
             {
                 FullName = model.FullName,
                 Email = model.Email,
-                UserName = model.Email,
-                //Role = model.Role
+                PasswordHash = model.Password,
+                UserName = model.Email
             };
-            var result = await userManager.CreateAsync(user, model.Password);
+            var user = await _userManager.FindByEmailAsync(newUser.Email);
+            if (user is not null) return new GeneralResponse(false, "User registered already");
 
-            if(result.Succeeded)
+            var createUser = await _userManager.CreateAsync(newUser!, model.Password);
+            if (!createUser.Succeeded) return new GeneralResponse(false, "Error occured.. please try again");
+
+            //Assign Default Role : Admin to first registrar; rest is employee
+            var checkAdmin = await _roleManager.FindByNameAsync("Admin");
+            if (checkAdmin is null)
             {
-                //kiem tra role Employee da co hay chua
-                if(!await roleManager.RoleExistsAsync(ApplicationRole.Employee))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(ApplicationRole.Employee));
-                }
-                await userManager.AddToRoleAsync(user, ApplicationRole.Employee);
+                await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
+                await _userManager.AddToRoleAsync(newUser, "Admin");
+                return new GeneralResponse(true, "Account Created");
             }
+            else
+            {
+                var checkUser = await _roleManager.FindByNameAsync("Employee");
+                if (checkUser is null)
+                    await _roleManager.CreateAsync(new IdentityRole() { Name = "Employee" });
 
-            return result;
+                await _userManager.AddToRoleAsync(newUser, "Employee");
+                return new GeneralResponse(true, "Account Created");
+            }
         }
     }
 }

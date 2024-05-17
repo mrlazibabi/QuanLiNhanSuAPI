@@ -1,4 +1,4 @@
-﻿namespace QuanLiNhanSu2.Models
+﻿namespace QuanLiNhanSu2.Models.QuanLiNhanSuModels
 {
     public class DepartmentModel
     {

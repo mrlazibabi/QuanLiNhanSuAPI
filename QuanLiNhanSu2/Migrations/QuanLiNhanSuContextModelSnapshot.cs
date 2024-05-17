@@ -268,7 +268,7 @@ namespace QuanLiNhanSu2.Migrations
                     b.ToTable("Employee");
                 });
 
-            modelBuilder.Entity("QuanLiNhanSu2.Models.DepartmentModel", b =>
+            modelBuilder.Entity("QuanLiNhanSu2.Models.QuanLiNhanSuModels.DepartmentModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -282,10 +282,14 @@ namespace QuanLiNhanSu2.Migrations
                     b.ToTable("DepartmentModel");
                 });
 
-            modelBuilder.Entity("QuanLiNhanSu2.Models.EmployeeModel", b =>
+            modelBuilder.Entity("QuanLiNhanSu2.Models.QuanLiNhanSuModels.EmployeeModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DepartmentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()

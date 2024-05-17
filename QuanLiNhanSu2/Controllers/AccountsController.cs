@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Models.AuthenModels;
 using QuanLiNhanSu2.Services;
 
 namespace QuanLiNhanSu2.Controllers
@@ -20,13 +20,7 @@ namespace QuanLiNhanSu2.Controllers
         public async Task<IActionResult> SignUp(SignUpModel model)
         {
             var result = await _accountServices.SignUpAsync(model);
-
-            if (result.Succeeded)
-            {
-                return Ok(result.Succeeded);
-            }
-
-            return StatusCode(500);
+            return Ok(result);
 
         }
 
@@ -34,12 +28,6 @@ namespace QuanLiNhanSu2.Controllers
         public async Task<IActionResult> SignIn(SignInModel model)
         {
             var result = await _accountServices.SignInAsync(model);
-
-            if (string.IsNullOrEmpty(result))
-            {
-                return Unauthorized();
-            }
-
             return Ok(result);
         }
     }

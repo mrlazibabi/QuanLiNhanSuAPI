@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using QuanLiNhanSu2.Entities;
-using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
 
 namespace QuanLiNhanSu2.Helpers
 {

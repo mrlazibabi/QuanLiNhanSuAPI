@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Entities;
-using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
 
 namespace QuanLiNhanSu2.Services.Implements
 {

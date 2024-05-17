@@ -81,7 +81,8 @@ namespace QuanLiNhanSu2.Migrations
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Sex = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepartmentId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

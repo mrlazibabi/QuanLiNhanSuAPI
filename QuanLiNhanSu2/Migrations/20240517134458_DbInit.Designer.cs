@@ -12,8 +12,8 @@ using QuanLiNhanSu2.Entities;
 namespace QuanLiNhanSu2.Migrations
 {
     [DbContext(typeof(QuanLiNhanSuContext))]
-    [Migration("20240516115042_AddIdentityAuthentication")]
-    partial class AddIdentityAuthentication
+    [Migration("20240517134458_DbInit")]
+    partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -270,7 +270,7 @@ namespace QuanLiNhanSu2.Migrations
                     b.ToTable("Employee");
                 });
 
-            modelBuilder.Entity("QuanLiNhanSu2.Models.DepartmentModel", b =>
+            modelBuilder.Entity("QuanLiNhanSu2.Models.QuanLiNhanSuModels.DepartmentModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -284,10 +284,14 @@ namespace QuanLiNhanSu2.Migrations
                     b.ToTable("DepartmentModel");
                 });
 
-            modelBuilder.Entity("QuanLiNhanSu2.Models.EmployeeModel", b =>
+            modelBuilder.Entity("QuanLiNhanSu2.Models.QuanLiNhanSuModels.EmployeeModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DepartmentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
