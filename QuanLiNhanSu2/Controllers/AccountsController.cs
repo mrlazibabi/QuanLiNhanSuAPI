@@ -26,7 +26,7 @@ namespace QuanLiNhanSu2.Controllers
                 return Ok(result.Succeeded);
             }
 
-            return Unauthorized();
+            return StatusCode(500);
 
         }
 

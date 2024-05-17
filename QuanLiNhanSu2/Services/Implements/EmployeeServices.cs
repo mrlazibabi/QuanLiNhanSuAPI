@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models;
+using QuanLiNhanSu2.Repositories;
 
 namespace QuanLiNhanSu2.Services.Implements
 {
@@ -9,32 +10,48 @@ namespace QuanLiNhanSu2.Services.Implements
     {
         private QuanLiNhanSuContext _context;
         private IMapper _mapper;
+        private readonly IDepartmentRepository _depRepo;
+        private readonly IEmployeeRepository _empRepo;
 
-        public EmployeeServices(QuanLiNhanSuContext context, IMapper mapper)
+        public EmployeeServices(QuanLiNhanSuContext context, IMapper mapper, IDepartmentRepository depRepo, IEmployeeRepository empRepo)
         {
             _context = context;
             _mapper = mapper;
+            _depRepo = depRepo;
+            _empRepo = empRepo;
             
         }
 
-        public async Task<string> AddEmployee(EmployeeModel model)
-        {
-            //var newEmp = _mapper.Map<Employee>(model);
-            //_context.Employees!.Add(newEmp);
-            //await _context.SaveChangesAsync();
+        //public async Task<string> AddEmployee(EmployeeModel model)
+        //{
 
-            //return newEmp.Id;
+        //    try
+        //    {
+        //        var newEmp = _mapper.Map<Employee>(model);
+        //        _context.Employees!.Add(newEmp);
+        //        await _context.SaveChangesAsync();
+
+        //        return newEmp.Id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ex.InnerException.Message;
+        //    }
+        //}
+
+        public async Task<EmployeeModel> AddEmployee(EmployeeModel model)
+        {
             try
             {
                 var newEmp = _mapper.Map<Employee>(model);
-                _context.Employees!.Add(newEmp);
-                await _context.SaveChangesAsync();
+                newEmp.Department = _depRepo!.GetById(model.DepartmentId).Result;
+                await _empRepo.AddEmpEntityAsync(newEmp);
 
-                return newEmp.Id;
+                return _mapper!.Map<EmployeeModel>(model);
             }
             catch (Exception ex)
             {
-                return ex.InnerException.Message;
+                return null;
             }
         }
 
