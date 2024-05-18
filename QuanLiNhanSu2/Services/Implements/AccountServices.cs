@@ -52,8 +52,8 @@ namespace QuanLiNhanSu2.Services.Implements
                 new Claim(ClaimTypes.Role, user.Role)
             };
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: _configuration["Jwt:ValidIssuer"],
+                audience: _configuration["Jwt:ValidAudience"],
                 claims: userClaims,
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials

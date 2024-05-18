@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
@@ -31,6 +32,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetEmpById(string id)
         {
             var user = await _empService.GetEmpById(id);
@@ -38,6 +40,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddEmployee(EmployeeModel model)
         {
             try
@@ -53,7 +56,8 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, EmployeeModel model)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateEmployee(string id, EmployeeModel model)
         {
             if (id == model.Id)
             {
@@ -67,7 +71,8 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteEmployee(string id)
         {
             if (id == null)
             {
