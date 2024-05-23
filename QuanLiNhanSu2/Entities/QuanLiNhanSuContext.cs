@@ -12,10 +12,10 @@ namespace QuanLiNhanSu2.Entities
         }
 
         #region DbSet
-        public DbSet<Employee>? Employees { get; set; }
+        public DbSet<User>? Users { get; set; }
         public DbSet<Department>? Departments { get; set; }
-        public DbSet<EmployeeModel>? EmployeeModel { get; set; }
-        public DbSet<DepartmentModel>? DepartmentModel { get; set; }
+        public DbSet<Role>? Roles { get; set; }
+
         #endregion
     }
 }

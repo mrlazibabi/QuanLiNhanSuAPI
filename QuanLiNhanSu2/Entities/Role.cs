@@ -3,12 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLiNhanSu2.Entities
 {
-    [Table("Department")]
-    public class Department
+    [Table("Role")]
+    public class Role
     {
         [Key]
-
-        public int DepartmentId { get; set; }
+        public int RoleId { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<User>? Users { get; set; }

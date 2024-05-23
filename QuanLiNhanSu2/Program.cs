@@ -69,7 +69,7 @@ builder.Services.AddDbContext<QuanLiNhanSuContext>(option => option.UseSqlServer
 builder.Services.AddAutoMapper(typeof(Program));
 
 // Life Cycle DI : AddSingleton(). AddTransient(), AddScope()
-builder.Services.AddScoped<IEmployeeServices, EmployeeServices>();
+builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
 builder.Services.AddScoped<IAccountServices, AccountServices>();
 

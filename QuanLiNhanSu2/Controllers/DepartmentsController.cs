@@ -31,7 +31,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetDepById(string id)
+        public async Task<IActionResult> GetDepById(int id)
         {
             var dep = await _depService.GetDepById(id);
             return dep == null ? NotFound() : Ok(dep);
@@ -54,9 +54,9 @@ namespace QuanLiNhanSu2.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateDepartment(string id, DepartmentModel model)
+        public async Task<IActionResult> UpdateDepartment(int id, DepartmentModel model)
         {
-            if (id == model.Id)
+            if (id == model.DepartmentId)
             {
                 await _depService.UpdateDepartment(id, model);
                 return Ok();
@@ -69,7 +69,7 @@ namespace QuanLiNhanSu2.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteDepartment(string id)
+        public async Task<IActionResult> DeleteDepartment(int id)
         {
             if (id == null)
             {

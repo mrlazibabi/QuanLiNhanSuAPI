@@ -17,18 +17,18 @@ namespace QuanLiNhanSu2.Services.Implements
 
         }
 
-        public async Task<string> AddDepartment(DepartmentModel model)
+        public async Task<int> AddDepartment(DepartmentModel model)
         {
             var newDep = _mapper.Map<Department>(model);
             _context.Departments!.Add(newDep);
             await _context.SaveChangesAsync();
 
-            return newDep.Id;
+            return newDep.DepartmentId;
         }
 
-        public async Task DeleteDepartment(string id)
+        public async Task DeleteDepartment(int id)
         {
-            var deleteDep = _context.Departments!.SingleOrDefault(x => x.Id == id);
+            var deleteDep = _context.Departments!.SingleOrDefault(x => x.DepartmentId == id);
             if (deleteDep != null)
             {
                 _context.Departments!.Remove(deleteDep);
@@ -42,15 +42,15 @@ namespace QuanLiNhanSu2.Services.Implements
             return _mapper.Map<List<DepartmentModel>>(deps);
         }
 
-        public async Task<DepartmentModel> GetDepById(string id)
+        public async Task<DepartmentModel> GetDepById(int id)
         {
             var emp = await _context.Departments!.FindAsync(id);
             return _mapper.Map<DepartmentModel>(emp);
         }
 
-        public async Task UpdateDepartment(string id, DepartmentModel model)
+        public async Task UpdateDepartment(int id, DepartmentModel model)
         {
-            if (id == model.Id)
+            if (id == model.DepartmentId)
             {
                 var updateDep = _mapper.Map<Department>(model);
                 _context.Departments!.Update(updateDep);

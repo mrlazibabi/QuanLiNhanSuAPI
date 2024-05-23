@@ -8,7 +8,8 @@ namespace QuanLiNhanSu2.Helpers
     {
         public ApplicationMapper()
         {
-            CreateMap<Employee, EmployeeModel>().ReverseMap();
+            CreateMap<User, UserModel>().ReverseMap();
+            CreateMap<Role, RoleModel>().ReverseMap();
             CreateMap<Department, DepartmentModel>().ReverseMap();
         }
     }
