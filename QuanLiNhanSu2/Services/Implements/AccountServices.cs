@@ -49,7 +49,7 @@ namespace QuanLiNhanSu2.Services.Implements
             {
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role )
             };
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:ValidIssuer"],
@@ -76,24 +76,26 @@ namespace QuanLiNhanSu2.Services.Implements
 
             var createUser = await _userManager.CreateAsync(newUser!, model.Password);
             if (!createUser.Succeeded) return new GeneralResponse(false, "Error occured.. please try again");
+            
+            return new GeneralResponse(true, "Account Created");
 
             //Assign Default Role : Admin to first registrar; rest is employee
-            var checkAdmin = await _roleManager.FindByNameAsync("Admin");
-            if (checkAdmin is null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
-                await _userManager.AddToRoleAsync(newUser, "Admin");
-                return new GeneralResponse(true, "Account Created");
-            }
-            else
-            {
-                var checkUser = await _roleManager.FindByNameAsync("Employee");
-                if (checkUser is null)
-                    await _roleManager.CreateAsync(new IdentityRole() { Name = "Employee" });
+            //var checkAdmin = await _roleManager.FindByNameAsync("Admin");
+            //if (checkAdmin is null)
+            //{
+            //    await _roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
+            //    await _userManager.AddToRoleAsync(newUser, "Admin");
+            //    return new GeneralResponse(true, "Account Created");
+            //}
+            //else
+            //{
+            //    var checkUser = await _roleManager.FindByNameAsync("Employee");
+            //    if (checkUser is null)
+            //        await _roleManager.CreateAsync(new IdentityRole() { Name = "Employee" });
 
-                await _userManager.AddToRoleAsync(newUser, "Employee");
-                return new GeneralResponse(true, "Account Created");
+            //    await _userManager.AddToRoleAsync(newUser, "Employee");
+            //    return new GeneralResponse(true, "Account Created");
             }
         }
     }
-}
+
