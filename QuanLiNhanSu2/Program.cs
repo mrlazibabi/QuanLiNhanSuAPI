@@ -62,6 +62,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Employee", policy => policy.RequireRole("Employee"));
+});
+
 // Add DBContext
 builder.Services.AddDbContext<QuanLiNhanSuContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("QuanLiNhanSu")));
 
@@ -71,7 +77,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 // Life Cycle DI : AddSingleton(). AddTransient(), AddScope()
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
-builder.Services.AddScoped<IAccountServices, AccountServices>();
+builder.Services.AddScoped<IAppUserServices, AppUserServices>();
 
 var app = builder.Build();
 
