@@ -9,9 +9,9 @@ namespace QuanLiNhanSu2.Entities
         [Key]
         public int FormId { get; set; }
         [Required]
-        [ForeignKey("UserId")]
-        public virtual User? Users { get; set; }
-        public string UserId { get; set; }
+        [ForeignKey("Id")]
+        public virtual ApplicationUsers? ApplicationUsers { get; set; }
+        public string Id { get; set; }
         public DateTime Created {  get; set; } = DateTime.Now;
         [Required]
         public string FormName { get; set; }

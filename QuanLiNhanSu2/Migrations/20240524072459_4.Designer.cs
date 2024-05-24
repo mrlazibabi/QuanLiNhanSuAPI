@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLiNhanSu2.Entities;
 
@@ -11,9 +12,10 @@ using QuanLiNhanSu2.Entities;
 namespace QuanLiNhanSu2.Migrations
 {
     [DbContext(typeof(QuanLiNhanSuContext))]
-    partial class QuanLiNhanSuContextModelSnapshot : ModelSnapshot
+    [Migration("20240524072459_4")]
+    partial class _4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,13 +273,13 @@ namespace QuanLiNhanSu2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Id")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FormId");
 
-                    b.HasIndex("Id");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Form");
                 });
@@ -388,13 +390,13 @@ namespace QuanLiNhanSu2.Migrations
 
             modelBuilder.Entity("QuanLiNhanSu2.Entities.Form", b =>
                 {
-                    b.HasOne("QuanLiNhanSu2.Entities.ApplicationUsers", "ApplicationUsers")
+                    b.HasOne("QuanLiNhanSu2.Entities.User", "Users")
                         .WithMany()
-                        .HasForeignKey("Id")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUsers");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("QuanLiNhanSu2.Entities.User", b =>

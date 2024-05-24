@@ -59,9 +59,10 @@ namespace QuanLiNhanSu2.Controllers
             return result;
         }
         [HttpPost("Login")]
+        //public ActionResult<ApplicationUsers> Login(AppUserModel request)
         public async Task<string> Login(AppUserModel request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            var user = await _userManager.FindByNameAsync(request.Email);
 
             var checkPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
@@ -116,8 +117,8 @@ namespace QuanLiNhanSu2.Controllers
         {
             List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Name, user.Id),
-                new Claim(ClaimTypes.Role, "Admin")
+                new Claim("UserId", user.Id),
+                new Claim(ClaimTypes.Role, "Employee")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
