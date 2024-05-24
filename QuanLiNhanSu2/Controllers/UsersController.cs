@@ -50,7 +50,7 @@ namespace QuanLiNhanSu2.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, UserModel model)
         {
-            if (id == model.Id)
+            if (id == model.UserId)
             {
                 await _userServices.UpdateUserAsync(id, model);
                 return Ok();

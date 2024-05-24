@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.IdentityModel.Tokens;
@@ -20,11 +21,13 @@ namespace QuanLiNhanSu2.Controllers
         public static ApplicationUsers user = new ApplicationUsers();
         private readonly IConfiguration _configuration;
         private readonly IAppUserServices _appUserServices;
+        private readonly UserManager<ApplicationUsers> _userManager;
 
-        public AuthController(IConfiguration configuration, IAppUserServices appUserServices)
+        public AuthController(IConfiguration configuration, IAppUserServices appUserServices,  UserManager<ApplicationUsers> userManager)
         {
             _configuration = configuration;
             _appUserServices = appUserServices;
+            _userManager = userManager;
         }
 
         [HttpGet,Authorize]
@@ -34,35 +37,55 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpPost("Register")]
-        public ActionResult<ApplicationUsers> Register(AppUserModel request)
+        public async Task<IdentityResult> Register(AppUserModel request)
         {
             string passwordHash
                 = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
             user.FullName = request.FullName;
+            user.Email = request.Email;
             user.PasswordHash = passwordHash;
 
-            return Ok(user);
+            var appUser = new ApplicationUsers
+            {
+                UserName = request.Email,
+                FullName = request.FullName,
+                Email = request.Email,
+                PasswordHash = request.Password
+                
+            };
+
+            var result = await _userManager.CreateAsync(appUser, request.Password);
+            return result;
         }
         [HttpPost("Login")]
-        public ActionResult<ApplicationUsers> Login(AppUserModel request)
+        public async Task<string> Login(AppUserModel request)
         {
-            if (user.FullName != request.FullName)
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            var checkPassword = await _userManager.CheckPasswordAsync(user, request.Password);
+
+            if (user == null || !checkPassword)
             {
-                return BadRequest("User not found.");
+                return string.Empty;
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            {
-                return BadRequest("Wrong password.");
-            }
+            //if (user.Email != request.Email)
+            //{
+            //    return BadRequest("User not found.");
+            //}
+
+            //if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            //{
+            //    return BadRequest("Wrong password.");
+            //}
 
             string token = CreateToken(user);
 
             var refreshToken = GenerateRefreshToken();
             SetRefreshToken(refreshToken);
 
-            return Ok(token);
+            return token;
         }
 
         private RefreshToken GenerateRefreshToken()
@@ -93,6 +116,7 @@ namespace QuanLiNhanSu2.Controllers
         {
             List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Name, user.Id),
                 new Claim(ClaimTypes.Role, "Admin")
             };
 

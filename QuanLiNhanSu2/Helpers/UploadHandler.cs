@@ -5,7 +5,7 @@
         public string Upload (IFormFile file)
         {
             //extension
-            List<string> validExtension = new List<string>() { ".jpg", ".png", ".gif"};
+            List<string> validExtension = new List<string>() { ".jpg", ".png", ".gif", ".pdf"};
             string Extension = Path.GetExtension(file.FileName);
             if (!validExtension.Contains(Extension))
             {

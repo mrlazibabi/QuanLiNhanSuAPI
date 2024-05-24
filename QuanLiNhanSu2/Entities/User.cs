@@ -9,7 +9,7 @@ namespace QuanLiNhanSu2.Entities
     {
         [Key]
         [Required]
-        public string Id { get; set; }
+        public string UserId { get; set; }
         [Required]
         public string FullName { get; set; }
         [Required]

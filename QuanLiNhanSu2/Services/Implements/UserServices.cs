@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
@@ -14,6 +15,7 @@ namespace QuanLiNhanSu2.Services.Implements
         {
             _mapper = mapper;
             _context = context;
+            
         }
         public async Task<string> AddUserAsync(UserModel model)
         {
@@ -23,7 +25,7 @@ namespace QuanLiNhanSu2.Services.Implements
                 _context.Users!.Add(newUser);
                 await _context.SaveChangesAsync();
 
-                return newUser.Id;
+                return newUser.UserId;
             }
             catch (Exception ex)
             {
@@ -33,7 +35,7 @@ namespace QuanLiNhanSu2.Services.Implements
 
         public async Task DeleteUserAsync(string id)
         {
-            var deleteUser = _context.Users!.SingleOrDefault(x => x.Id == id);
+            var deleteUser = _context.Users!.SingleOrDefault(x => x.UserId == id);
             if (deleteUser != null)
             {
                 _context.Users!.Remove(deleteUser);
@@ -55,7 +57,7 @@ namespace QuanLiNhanSu2.Services.Implements
 
         public async Task UpdateUserAsync(string id, UserModel model)
         {
-            if (id == model.Id)
+            if (id == model.UserId)
             {
                 var updateUser = _mapper.Map<User>(model);
                 _context.Users!.Update(updateUser);
