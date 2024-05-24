@@ -6,8 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.AuthenModels;
 using QuanLiNhanSu2.Services;
-using QuanLiNhanSu2.Services.Implements;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;

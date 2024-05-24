@@ -17,6 +17,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllDepartments()
         {
             try
@@ -31,6 +32,7 @@ namespace QuanLiNhanSu2.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetDepById(int id)
         {
             var dep = await _depService.GetDepById(id);
