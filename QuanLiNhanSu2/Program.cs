@@ -70,7 +70,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 // Add DBContext
-builder.Services.AddDbContext<QuanLiNhanSuContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("QuanLiNhanSu")));
+builder.Services.AddDbContext<QuanLiNhanSuContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("QuanLiNhanSu2")));
 
 // Add Automapper
 builder.Services.AddAutoMapper(typeof(Program));
@@ -79,7 +79,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
 builder.Services.AddScoped<IAppUserServices, AppUserServices>();
-builder.Services.AddScoped <IUploadHandlerServices, UploadHandlerServices>();
+builder.Services.AddScoped<IUploadHandlerServices, UploadHandlerServices>();
+builder.Services.AddScoped<IFormServices, FormServices>();
+builder.Services.AddScoped<ISalaryServices, SalaryServices>();
 
 // add HttpContextAccessor
 builder.Services.AddHttpContextAccessor();

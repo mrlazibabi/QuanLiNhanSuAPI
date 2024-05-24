@@ -11,6 +11,7 @@ namespace QuanLiNhanSu2.Helpers
             CreateMap<User, UserModel>().ReverseMap();
             CreateMap<Role, RoleModel>().ReverseMap();
             CreateMap<Department, DepartmentModel>().ReverseMap();
+            CreateMap<Salary, SalaryModel>().ReverseMap();
         }
     }
 }

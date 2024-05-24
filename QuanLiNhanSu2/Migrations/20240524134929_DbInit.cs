@@ -28,10 +28,13 @@ namespace QuanLiNhanSu2.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TokenCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TokenExpires = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -182,10 +185,32 @@ namespace QuanLiNhanSu2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Form",
+                columns: table => new
+                {
+                    FormId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FormName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FormData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Form", x => x.FormId);
+                    table.ForeignKey(
+                        name: "FK_Form_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -195,7 +220,7 @@ namespace QuanLiNhanSu2.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_User_Department_DepartmentId",
                         column: x => x.DepartmentId,
@@ -207,6 +232,31 @@ namespace QuanLiNhanSu2.Migrations
                         column: x => x.RoleId,
                         principalTable: "Role",
                         principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Salary",
+                columns: table => new
+                {
+                    SalaryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BaseSalary = table.Column<long>(type: "bigint", nullable: false),
+                    AllowedOff = table.Column<int>(type: "int", nullable: false),
+                    ActualOff = table.Column<int>(type: "int", nullable: false),
+                    Bonus = table.Column<long>(type: "bigint", nullable: true),
+                    Deduction = table.Column<long>(type: "bigint", nullable: true),
+                    Final = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Salary", x => x.SalaryId);
+                    table.ForeignKey(
+                        name: "FK_Salary_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -250,6 +300,16 @@ namespace QuanLiNhanSu2.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Form_Id",
+                table: "Form",
+                column: "Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Salary_UserId",
+                table: "Salary",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_DepartmentId",
                 table: "User",
                 column: "DepartmentId");
@@ -278,13 +338,19 @@ namespace QuanLiNhanSu2.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Form");
+
+            migrationBuilder.DropTable(
+                name: "Salary");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "Department");

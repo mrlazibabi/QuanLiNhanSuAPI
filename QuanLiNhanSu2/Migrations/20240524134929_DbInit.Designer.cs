@@ -12,7 +12,7 @@ using QuanLiNhanSu2.Entities;
 namespace QuanLiNhanSu2.Migrations
 {
     [DbContext(typeof(QuanLiNhanSuContext))]
-    [Migration("20240523034132_DbInit")]
+    [Migration("20240524134929_DbInit")]
     partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,7 @@ namespace QuanLiNhanSu2.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -177,6 +178,7 @@ namespace QuanLiNhanSu2.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -202,8 +204,18 @@ namespace QuanLiNhanSu2.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TokenCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TokenExpires")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -242,6 +254,36 @@ namespace QuanLiNhanSu2.Migrations
                     b.ToTable("Department");
                 });
 
+            modelBuilder.Entity("QuanLiNhanSu2.Entities.Form", b =>
+                {
+                    b.Property<int>("FormId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FormId"), 1L, 1);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("FormData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FormName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FormId");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("Form");
+                });
+
             modelBuilder.Entity("QuanLiNhanSu2.Entities.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -259,9 +301,46 @@ namespace QuanLiNhanSu2.Migrations
                     b.ToTable("Role");
                 });
 
+            modelBuilder.Entity("QuanLiNhanSu2.Entities.Salary", b =>
+                {
+                    b.Property<int>("SalaryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SalaryId"), 1L, 1);
+
+                    b.Property<int>("ActualOff")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AllowedOff")
+                        .HasColumnType("int");
+
+                    b.Property<long>("BaseSalary")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("Bonus")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("Deduction")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Final")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("SalaryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Salary");
+                });
+
             modelBuilder.Entity("QuanLiNhanSu2.Entities.User", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("DepartmentId")
@@ -286,7 +365,7 @@ namespace QuanLiNhanSu2.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.HasIndex("DepartmentId");
 
@@ -344,6 +423,28 @@ namespace QuanLiNhanSu2.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("QuanLiNhanSu2.Entities.Form", b =>
+                {
+                    b.HasOne("QuanLiNhanSu2.Entities.ApplicationUsers", "ApplicationUsers")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUsers");
+                });
+
+            modelBuilder.Entity("QuanLiNhanSu2.Entities.Salary", b =>
+                {
+                    b.HasOne("QuanLiNhanSu2.Entities.User", "Users")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("QuanLiNhanSu2.Entities.User", b =>

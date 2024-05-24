@@ -137,7 +137,7 @@ namespace QuanLiNhanSu2.Controllers
             List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim("UserId", user.Id),
-                new Claim(ClaimTypes.Role, "Employee")
+                new Claim(ClaimTypes.Role, "Admin")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
