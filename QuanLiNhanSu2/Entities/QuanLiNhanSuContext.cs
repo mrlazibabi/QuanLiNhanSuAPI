@@ -16,6 +16,7 @@ namespace QuanLiNhanSu2.Entities
         public DbSet<Department>? Departments { get; set; }
         public DbSet<Role>? Roles { get; set; }
         public DbSet<Form> Forms { get; set; }
+        public DbSet<Salary> Salaries { get; set; }
 
         #endregion
     }
