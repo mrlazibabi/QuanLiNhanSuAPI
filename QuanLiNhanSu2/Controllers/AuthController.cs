@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.IdentityModel.Tokens;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.AuthenModels;
@@ -22,12 +20,14 @@ namespace QuanLiNhanSu2.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAppUserServices _appUserServices;
         private readonly UserManager<ApplicationUsers> _userManager;
+        private readonly QuanLiNhanSuContext _context;
 
-        public AuthController(IConfiguration configuration, IAppUserServices appUserServices,  UserManager<ApplicationUsers> userManager)
+        public AuthController(IConfiguration configuration, IAppUserServices appUserServices,  UserManager<ApplicationUsers> userManager, QuanLiNhanSuContext context)
         {
             _configuration = configuration;
             _appUserServices = appUserServices;
             _userManager = userManager;
+            _context = context;
         }
 
         [HttpGet,Authorize]
@@ -82,18 +82,37 @@ namespace QuanLiNhanSu2.Controllers
             //}
 
             string token = CreateToken(user);
-
             var refreshToken = GenerateRefreshToken();
             SetRefreshToken(refreshToken);
 
             return token;
         }
 
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<string>> RefreshToken()
+        {
+            var refreshToekn = Request.Cookies["refreshToken"];
+            if (!user.RefreshToken.Equals(refreshToekn))
+            {
+                return Unauthorized("Invalid Refresh Token");
+            }
+            else if(user.TokenExpires <  DateTime.Now)
+            {
+                return Unauthorized("Token Expired.");
+            }
+
+            string token = CreateToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+            SetRefreshToken(newRefreshToken);
+
+            return Ok(token);
+        }
+
         private RefreshToken GenerateRefreshToken()
         {
             var refreshToken = new RefreshToken { 
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(7)
+                TokenExpires = DateTime.Now.AddDays(7)
             };
 
             return refreshToken;
@@ -104,13 +123,13 @@ namespace QuanLiNhanSu2.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = newRefreshToken.Expires,
+                Expires = newRefreshToken.TokenExpires,
             };
             Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
 
             user.RefreshToken = newRefreshToken.Token;
-            user.TokenCreated = newRefreshToken.Created;
-            user.TokenExpires = newRefreshToken.Expires;
+            user.TokenCreated = newRefreshToken.TokenCreated;
+            user.TokenExpires = newRefreshToken.TokenExpires;
         }
 
         private string CreateToken(ApplicationUsers user)
