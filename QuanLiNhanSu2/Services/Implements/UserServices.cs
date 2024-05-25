@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
+using QuanLiNhanSu2.Repositories;
 
 namespace QuanLiNhanSu2.Services.Implements
 {
@@ -10,59 +11,35 @@ namespace QuanLiNhanSu2.Services.Implements
     {
         private readonly IMapper _mapper;
         private readonly QuanLiNhanSuContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UserServices(IMapper mapper, QuanLiNhanSuContext context)
+        public UserServices(IUserRepository userRepository)
         {
-            _mapper = mapper;
-            _context = context;
-            
+            _userRepository = userRepository;
         }
         public async Task<string> AddUserAsync(UserModel model)
         {
-            try
-            {
-                var newUser = _mapper.Map<User>(model);
-                _context.Users!.Add(newUser);
-                await _context.SaveChangesAsync();
-
-                return newUser.UserId;
-            }
-            catch (Exception ex)
-            {
-                return ex.InnerException.Message;
-            }
+            return await _userRepository.AddUserAsync(model);
         }
 
-        public async Task DeleteUserAsync(string id)
+        public Task DeleteUserAsync(string id)
         {
-            var deleteUser = _context.Users!.SingleOrDefault(x => x.UserId == id);
-            if (deleteUser != null)
-            {
-                _context.Users!.Remove(deleteUser);
-                await _context.SaveChangesAsync();
-            }
+            return _userRepository.DeleteUserAsync(id);
         }
 
-        public async Task<List<UserModel>> GetAllUserAsync()
+        public Task<List<UserModel>> GetAllUserAsync()
         {
-            var users = await _context.Users!.ToListAsync();
-            return _mapper.Map<List<UserModel>>(users);
+            return _userRepository.GetAllUserAsync();
         }
 
-        public async Task<UserModel> GetUserByIdAsync(string id)
+        public Task<UserModel> GetUserByIdAsync(string id)
         {
-            var user = await _context.Users!.FindAsync(id);
-            return _mapper.Map<UserModel>(user);
+            return _userRepository.GetUserByIdAsync(id);
         }
 
-        public async Task UpdateUserAsync(string id, UserModel model)
+        public Task UpdateUserAsync(string id, UserModel model)
         {
-            if (id == model.UserId)
-            {
-                var updateUser = _mapper.Map<User>(model);
-                _context.Users!.Update(updateUser);
-                await _context.SaveChangesAsync();
-            }
+            return _userRepository.UpdateUserAsync(id, model);
         }
     }
 }

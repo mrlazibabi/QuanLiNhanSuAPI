@@ -2,74 +2,47 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLiNhanSu2.Entities;
 using QuanLiNhanSu2.Models.QuanLiNhanSuModels;
+using QuanLiNhanSu2.Repositories;
+using QuanLiNhanSu2.Repositories.Implements;
 
 namespace QuanLiNhanSu2.Services.Implements
 {
     public class SalaryServices : ISalaryServices
     {
-        private readonly QuanLiNhanSuContext _context;
-        private readonly IMapper _mapper;
+        private readonly ISalaryRepository _salaryRepository;
 
-        public SalaryServices(QuanLiNhanSuContext context, IMapper mapper)
+        public SalaryServices(ISalaryRepository salaryRepository)
         {
-            _context = context;
-            _mapper = mapper;
+            _salaryRepository = salaryRepository;
         }
-        public async Task<int> AddSalaryAsync(SalaryModel salarymodel)
+        public Task<int> AddSalaryAsync(SalaryModel salarymodel)
         {
-            //_context.Salaries.Add(salarymodel);
-            //await _context.SaveChangesAsync();      
-            var newSalary = _mapper.Map<Salary>(salarymodel);
-            _context.Salaries!.Add(newSalary);
-            await _context.SaveChangesAsync();
-
-            return newSalary.SalaryId;
+            return _salaryRepository.AddSalaryAsync(salarymodel);
         }
 
-        public async Task DeleteSalaryAsync(int id)
+        public Task DeleteSalaryAsync(int id)
         {
-            var salary = await _context.Salaries.FindAsync(id);
-            if (salary != null)
-            {
-                _context.Salaries.Remove(salary);
-                await _context.SaveChangesAsync();
-            }
+            return _salaryRepository.DeleteSalaryAsync(id);
         }
 
-        public async Task<List<SalaryModel>> GetAllSalariesAsync()
+        public Task<List<SalaryModel>> GetAllSalariesAsync()
         {
-            //return await _context.Salaries.ToListAsync();
-            var salaries = await _context.Salaries!.ToListAsync();
-            return _mapper.Map<List<SalaryModel>>(salaries);
+            return _salaryRepository.GetAllSalariesAsync();
         }
 
-        public async Task<SalaryModel> GetSalaryByIdAsync(int id)
+        public Task<SalaryModel> GetSalaryByIdAsync(int id)
         {
-            //return await _context.Salaries.FirstOrDefaultAsync(s => s.SalaryId == id);
-            var salary = await _context.Salaries.FindAsync(id);
-            return _mapper.Map<SalaryModel>(salary);
+            return _salaryRepository.GetSalaryByIdAsync(id);
         }
 
-        public async Task<SalaryModel> GetSalaryByUserIdAsync(string userId)
+        public Task<SalaryModel> GetSalaryByUserIdAsync(string userId)
         {
-            //return await _context.Salaries.Where(s => s.UserId == userId).ToListAsync();
-            //var userSalary = await _context.Salaries.FindAsync(userId);
-
-            var userSalary = await _context.Salaries.Where(s => s.UserId == userId).FirstOrDefaultAsync();
-            return _mapper.Map<SalaryModel>(userSalary);
-
+            return _salaryRepository.GetSalaryByUserIdAsync(userId);
         }
 
-        public async Task UpdateSalaryAsync(SalaryModel salarymodel, int id)
+        public Task UpdateSalaryAsync(SalaryModel salarymodel, int id)
         {
-            //_context.Salaries.Update(salarymodel);
-            //await _context.SaveChangesAsync();
-            if(id == salarymodel.SalaryId)
-            {
-                var updateSalary = _mapper.Map<Salary>(salarymodel);
-                _context.Salaries!.Update(updateSalary);
-                await _context.SaveChangesAsync();
-            }
+            return _salaryRepository.UpdateSalaryAsync(salarymodel, id);
         }
     }
 }

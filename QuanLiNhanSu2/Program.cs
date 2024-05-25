@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuanLiNhanSu2.Entities;
+using QuanLiNhanSu2.Repositories;
+using QuanLiNhanSu2.Repositories.Implements;
 using QuanLiNhanSu2.Services;
 using QuanLiNhanSu2.Services.Implements;
 using Swashbuckle.AspNetCore.Filters;
@@ -76,11 +78,15 @@ builder.Services.AddDbContext<QuanLiNhanSuContext>(option => option.UseSqlServer
 builder.Services.AddAutoMapper(typeof(Program));
 
 // Life Cycle DI : AddSingleton(). AddTransient(), AddScope()
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IDepartmentServices, DepartmentServices>();
 builder.Services.AddScoped<IAppUserServices, AppUserServices>();
 builder.Services.AddScoped<IUploadHandlerServices, UploadHandlerServices>();
+builder.Services.AddScoped<IFormRepository, FormRepository>();
 builder.Services.AddScoped<IFormServices, FormServices>();
+builder.Services.AddScoped<ISalaryRepository, SalaryRepository>();
 builder.Services.AddScoped<ISalaryServices, SalaryServices>();
 
 // add HttpContextAccessor
