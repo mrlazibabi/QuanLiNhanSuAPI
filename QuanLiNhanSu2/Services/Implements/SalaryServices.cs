@@ -53,7 +53,9 @@ namespace QuanLiNhanSu2.Services.Implements
         public async Task<SalaryModel> GetSalaryByUserIdAsync(string userId)
         {
             //return await _context.Salaries.Where(s => s.UserId == userId).ToListAsync();
-            var userSalary = await _context.Salaries.FindAsync(userId);
+            //var userSalary = await _context.Salaries.FindAsync(userId);
+
+            var userSalary = await _context.Salaries.Where(s => s.UserId == userId).FirstOrDefaultAsync();
             return _mapper.Map<SalaryModel>(userSalary);
 
         }

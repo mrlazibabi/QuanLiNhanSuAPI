@@ -16,12 +16,19 @@ namespace QuanLiNhanSu2.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUploadHandlerServices _uploadHandlerServices;
         private readonly ISalaryServices _salaryServices;
+        private readonly IAppUserServices _appUserServices;
 
-        public EmployeesController(IHttpContextAccessor httpContextAccessor, IUploadHandlerServices uploadHandlerServices, ISalaryServices salaryServices)
+        public EmployeesController(IHttpContextAccessor httpContextAccessor, IUploadHandlerServices uploadHandlerServices, ISalaryServices salaryServices, IAppUserServices appUserServices)
         {
             _httpContextAccessor = httpContextAccessor;
             _uploadHandlerServices = uploadHandlerServices;
             _salaryServices = salaryServices;
+            _appUserServices = appUserServices;
+        }
+        [HttpGet, Authorize]
+        public ActionResult<string> GetMyName()
+        {
+            return Ok(_appUserServices.GetMyName());
         }
 
         private string GetUserId()

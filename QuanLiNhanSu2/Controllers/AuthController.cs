@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using QuanLiNhanSu2.Entities;
@@ -20,21 +19,13 @@ namespace QuanLiNhanSu2.Controllers
         private readonly IConfiguration _configuration;
         private readonly IAppUserServices _appUserServices;
         private readonly UserManager<ApplicationUsers> _userManager;
-        private readonly QuanLiNhanSuContext _context;
 
-        public AuthController(IConfiguration configuration, IAppUserServices appUserServices,  UserManager<ApplicationUsers> userManager, QuanLiNhanSuContext context)
+        public AuthController(IConfiguration configuration, IAppUserServices appUserServices,  UserManager<ApplicationUsers> userManager)
         {
             _configuration = configuration;
-            _appUserServices = appUserServices;
             _userManager = userManager;
-            _context = context;
         }
 
-        [HttpGet,Authorize]
-        public ActionResult<string> GetMyName()
-        {
-            return Ok(_appUserServices.GetMyName());
-        }
 
         [HttpPost("Register")]
         public async Task<IdentityResult> Register(AppUserModel request)
@@ -138,6 +129,7 @@ namespace QuanLiNhanSu2.Controllers
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim("UserId", user.Id),
                 new Claim(ClaimTypes.Role, "Admin")
+                //new Claim(ClaimTypes.Role, "Employee")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
